@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import firebase_admin
-from firebase_admin import credentials
+from firebase_admin import credentials, db, firestore, storage
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,8 +37,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'users',
+
+    # Package
     'django_admin_listfilter_dropdown',
+
+    # Apps
+    'users',
+    'realtime',
+    'firestore',
 ]
 
 MIDDLEWARE = [
@@ -124,4 +130,30 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Firebase
 cred = credentials.Certificate('key.json')
-firebase_admin.initialize_app(cred)
+firebase_admin.initialize_app(
+    cred, {
+        'databaseURL': 'https://gaming-news-4f591-default-rtdb.asia-southeast1.firebasedatabase.app/',
+        'storageBucket': 'gaming-news-4f591.appspot.com',
+        'projectId': 'gaming-news-4f591',
+    }
+)
+
+
+bucket = storage.bucket()
+firestoreDB = firestore.client()
+
+print('*********************************')
+users_ref = firestoreDB.collection(u'bookmarked')
+docs = users_ref.stream()
+for doc in docs:
+    print(f'{doc.id} => {doc.to_dict()}')
+print('*********************************')
+
+# firestore_ref = firestore.client()
+#
+# doc_ref = firestore_ref.collection(u'demo_users').document(u'alovelace')
+# doc_ref.set({
+#     u'first': u'Ada',
+#     u'last': u'Lovelace',
+#     u'born': 1815
+# })

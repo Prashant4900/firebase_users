@@ -1,6 +1,7 @@
 from firebase_admin import auth
 from users.models import FirebaseUsers
 from .create_user import create_user
+from datetime import datetime
 
 
 def update_user_info(obj):
@@ -12,21 +13,30 @@ def update_user_info(obj):
     if FirebaseUsers.objects.filter(id=obj.id).exists():
 
         if user_image:
-            auth.update_user(
+            user = auth.update_user(
                 uid=obj.uid, email=email, display_name=username,
                 email_verified=obj.verified, photo_url=user_image, disabled=obj.disabled
             )
+            last_sign_in = user.user_metadata.last_sign_in_timestamp
+
             FirebaseUsers.objects.filter(uid=obj.uid).update(
                 name=username, email=email, verified=obj.verified,
                 user_image=user_image, disabled=obj.disabled,
+                last_sign_in=datetime.min if not last_sign_in else datetime.utcfromtimestamp(last_sign_in / 1000),
+                create_at=datetime.utcfromtimestamp(user.user_metadata.creation_timestamp / 1000),
             )
 
-        auth.update_user(
+        user = auth.update_user(
             uid=obj.uid, email=email, display_name=username,
-            email_verified=obj.verified, disabled=obj.disabled
+            email_verified=obj.verified, disabled=obj.disabled,
         )
+
+        last_sign_in = user.user_metadata.last_sign_in_timestamp
+
         FirebaseUsers.objects.filter(uid=obj.uid).update(
             name=username, email=email, verified=obj.verified, disabled=obj.disabled,
+            last_sign_in=datetime.min if not last_sign_in else datetime.utcfromtimestamp(last_sign_in / 1000),
+            create_at=datetime.utcfromtimestamp(user.user_metadata.creation_timestamp / 1000),
         )
 
     else:

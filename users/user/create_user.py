@@ -23,9 +23,9 @@ def create_user(obj):
     )
 
     instance = FirebaseUsers(
-        uid=user.uid, name=user.display_name, email=user.email,
-        verified=user.email_verified, disabled=user.disabled,
-        create_at=datetime.now(),
+        uid=user.uid, name=user.display_name, email=user.email, verified=user.email_verified,
+        disabled=user.disabled,
+        create_at=datetime.utcfromtimestamp(user.user_metadata.creation_timestamp / 1000),
         provider=user.provider_data[0].provider_id
     )
 
@@ -40,9 +40,9 @@ def create_user(obj):
         )
 
         instance = FirebaseUsers(
-            uid=user.uid, name=user.display_name, email=user.email,
-            verified=user.email_verified, disabled=user.disabled,
-            create_at=datetime.now(),
+            uid=user.uid, name=user.display_name, email=user.email,verified=user.email_verified,
+            disabled=user.disabled,
+            create_at=datetime.utcfromtimestamp(user.user_metadata.creation_timestamp / 1000),
             provider=user.provider_data[0].provider_id, phone=user.phone_number
         )
 
