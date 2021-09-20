@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # Package
-    'django_admin_listfilter_dropdown',
 
     # Apps
     'users',
@@ -142,12 +141,12 @@ firebase_admin.initialize_app(
 bucket = storage.bucket()
 firestoreDB = firestore.client()
 
-print('*********************************')
-users_ref = firestoreDB.collection(u'bookmarked')
-docs = users_ref.stream()
-for doc in docs:
-    print(f'{doc.id} => {doc.to_dict()}')
-print('*********************************')
+# print('*********************************')
+# users_ref = firestoreDB.collection(u'comments')
+# docs = users_ref.stream()
+# for doc in docs:
+#     print(f'{doc.id} => {doc.to_dict()}')
+# print('*********************************')
 
 # firestore_ref = firestore.client()
 #
